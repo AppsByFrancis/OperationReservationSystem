@@ -13,9 +13,7 @@ import java.util.List;
 @Entity
 public class Patient {
     @Id
-    @GeneratedValue(
-            strategy = GenerationType.IDENTITY
-    )
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer Id;
 
     private String firstName;
@@ -24,8 +22,15 @@ public class Patient {
 
     private String Problem;
 
-    @OneToMany(
-            mappedBy = "patient"
-    )
+    @OneToMany(mappedBy = "patient")
     private List<TimeTableSlot> timeSlots;
+
+    @ManyToOne()
+    @JoinColumn(
+            name = "hospital_patients",nullable = false)
+    private Hospital hospital;
+
+    @ManyToMany
+    @JoinTable(name = "patient_doctors")
+    private List<Doctor> doctors;
 }

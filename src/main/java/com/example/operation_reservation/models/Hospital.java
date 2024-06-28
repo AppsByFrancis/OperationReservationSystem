@@ -1,15 +1,13 @@
 package com.example.operation_reservation.models;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -23,17 +21,15 @@ public class Hospital {
 
     private String name;
 
-    private Patient patient;
+    @OneToMany(mappedBy = "hospital")
+    private List<Patient> patients;
 
-    private Doctor doctor;
+    @OneToMany(mappedBy = "hospital")
+    private List<Doctor> doctors;
 
-    @Column(
-            updatable = false,
-            nullable = false
-    )
+    @Column(updatable = false,nullable = false)
     private LocalDateTime createdAt;
-    @Column(
-            insertable = false
-    )
+
+    @Column(insertable = false)
     private LocalDateTime lastModified;
 }
