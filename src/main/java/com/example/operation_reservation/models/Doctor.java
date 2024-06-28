@@ -33,5 +33,5 @@ public class Doctor {
     private Hospital hospital;
 
     @ManyToMany(mappedBy = "doctors")
-    private Patient patient;
+    private List<Patient> patient;
 }

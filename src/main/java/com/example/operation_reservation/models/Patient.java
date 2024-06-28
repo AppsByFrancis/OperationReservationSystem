@@ -26,8 +26,7 @@ public class Patient {
     private List<TimeTableSlot> timeSlots;
 
     @ManyToOne()
-    @JoinColumn(
-            name = "hospital_patients",nullable = false)
+    @JoinColumn(name = "hospital_patients",nullable = false)
     private Hospital hospital;
 
     @ManyToMany
