@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -16,25 +15,23 @@ import java.util.List;
 @AllArgsConstructor
 @SuperBuilder
 @Entity
-public class TimeTableSlot extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-
+public class Appointment extends BaseEntity {
     @ManyToOne
-    @JoinColumn(name = "doctor_slots")
+    @JoinColumn(name = "doctor_appointment")
     private Doctor doctor;
 
     @ManyToOne
-    @JoinColumn(name = "patient_slots", nullable = false)
+    @JoinColumn(name = "patient_appointment")
     private Patient patient;
 
-    @OneToOne(mappedBy = "slot")
-    private Appointment appointment;
+    private String problem;
+
+    @OneToOne
+    @JoinColumn(name = "slot_id", nullable = false)
+    private TimeTableSlot slot;
 
     private LocalDateTime startDate;
 
     private LocalDateTime endDate;
 
-    private Boolean isBooked;
 }

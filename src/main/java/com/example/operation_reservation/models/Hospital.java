@@ -1,24 +1,21 @@
 package com.example.operation_reservation.models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
+import lombok.experimental.SuperBuilder;
 import java.util.List;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 @Entity
-public class Hospital {
-    @Id
-    @GeneratedValue
-    private Integer id;
-
+public class Hospital extends BaseEntity {
     private String name;
 
     @OneToMany(mappedBy = "hospital")
@@ -26,10 +23,4 @@ public class Hospital {
 
     @OneToMany(mappedBy = "hospital")
     private List<Doctor> doctors;
-
-    @Column(updatable = false,nullable = false)
-    private LocalDateTime createdAt;
-
-    @Column(insertable = false)
-    private LocalDateTime lastModified;
 }
