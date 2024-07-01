@@ -6,8 +6,8 @@ import com.example.operation_reservation.models.Patient;
 import java.time.LocalDateTime;
 
 public record AppointmentResponseDto(
-        Doctor doctor,
-        Patient patient,
+        DoctorResponseDto doctor,
+        PatientResponseDto patient,
         String problem,
         LocalDateTime startDate,
         LocalDateTime endDate

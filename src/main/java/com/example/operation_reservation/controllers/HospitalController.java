@@ -7,6 +7,8 @@ import com.example.operation_reservation.repositories.HospitalRepository;
 import com.example.operation_reservation.responseDto.DoctorResponseDto;
 import com.example.operation_reservation.responseDto.HospitalResponseDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -49,11 +51,19 @@ public class HospitalController {
     }
 
     @GetMapping
-    public List<HospitalResponseDto> getAllHospitals()
+    public ResponseEntity<Object> getAllHospitals()
     {
-        return hospitalRepository.findAll()
-                .stream()
-                .map(this::toHospitalResponseDto)
-                .collect(Collectors.toList());
+        try
+        {
+            List<HospitalResponseDto> response = hospitalRepository.findAll()
+                    .stream()
+                    .map(this::toHospitalResponseDto)
+                    .collect(Collectors.toList());
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+        catch (Exception e)
+        {
+            return new ResponseEntity<>("An internal Error occured", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

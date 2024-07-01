@@ -2,12 +2,11 @@ package com.example.operation_reservation.controllers;
 
 import com.example.operation_reservation.dto.DoctorDto;
 import com.example.operation_reservation.models.Doctor;
-import com.example.operation_reservation.models.Hospital;
 import com.example.operation_reservation.repositories.DoctorRepository;
-import com.example.operation_reservation.repositories.HospitalRepository;
 import com.example.operation_reservation.responseDto.DoctorResponseDto;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.operation_reservation.service.DoctorService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -18,58 +17,70 @@ import java.util.stream.Collectors;
 @RequestMapping("/doctor")
 public class DoctorController {
 
-    private final HospitalRepository hospitalRepository;
     private final DoctorRepository doctorRepository;
+    private final DoctorService doctorService;
 
-    @Autowired
-    public DoctorController(HospitalRepository hospitalRepository, DoctorRepository doctorRepository) {
-        this.hospitalRepository = hospitalRepository;
+    public DoctorController(DoctorService doctorService, DoctorRepository doctorRepository) {
+        this.doctorService = doctorService;
         this.doctorRepository = doctorRepository;
     }
 
-    private Doctor toDoctor(DoctorDto dto) {
-        Doctor doctor = new Doctor();
-        doctor.setFirstName(dto.firstName());
-        doctor.setLastName(dto.lastName());
-        doctor.setQualification(dto.qualification());
-
-        // Fetch the first hospital from the database
-        Hospital hospital = hospitalRepository.findAll().stream().findFirst()
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No hospital found"));
-        doctor.setHospital(hospital);
-        return doctor;
-    }
-
-    private DoctorResponseDto toDoctorResponseDto(Doctor doctor) {
-        return new DoctorResponseDto(
-                doctor.getFirstName(),
-                doctor.getLastName(),
-                doctor.getQualification(),
-                doctor.getHospital().getName()
-        );
-    }
-
     @GetMapping
-    public List<DoctorResponseDto> getAllDoctors() {
-        return doctorRepository.findAll()
-                .stream()
-                .map(this::toDoctorResponseDto)
-                .collect(Collectors.toList());
+    public ResponseEntity<Object> getAllDoctors() {
+        try
+        {
+            List<DoctorResponseDto> response = doctorRepository.findAll()
+                    .stream()
+                    .map(doctorService::toDoctorResponseDto)
+                    .collect(Collectors.toList());
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+        catch (Exception e)
+        {
+            return new ResponseEntity<>("An internal server error occured", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @GetMapping("/{id}")
-    public DoctorResponseDto getDoctor(@PathVariable Integer id)
+    public ResponseEntity<Object> getDoctor(@PathVariable Integer id)
     {
-        Doctor findDoctor = doctorRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No doctor found whit such id"));
-        return toDoctorResponseDto(findDoctor);
+        try
+        {
+            Doctor findDoctor = doctorRepository.findById(id)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No doctor found whit such id"));
+            DoctorResponseDto response = doctorService.toDoctorResponseDto(findDoctor);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+        catch (ResponseStatusException e)
+        {
+            return new ResponseEntity<>("Resource not found, invalid id", HttpStatus.NOT_FOUND);
+        }
+        catch (Exception e)
+        {
+            return new ResponseEntity<>("An internal server error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 
     @PostMapping
-    public DoctorResponseDto addDoctor(@RequestBody DoctorDto dto) {
-        Doctor doctor = toDoctor(dto);
-        Doctor savedDoctor = doctorRepository.save(doctor);
-        return toDoctorResponseDto(savedDoctor);
+    public ResponseEntity<Object> addDoctor(@RequestBody DoctorDto dto) {
+        try
+        {
+            Doctor doctor = doctorService.toDoctor(dto);
+            Doctor savedDoctor = doctorRepository.save(doctor);
+            DoctorResponseDto response = doctorService.toDoctorResponseDto(savedDoctor);
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+        }
+        catch (ResponseStatusException e)
+        {
+            return new ResponseEntity<>("Resource couldn't be created, check if firstName " +
+            ",lastName and qualification have been included in request body",
+                    HttpStatus.BAD_REQUEST
+            );
+        }
+        catch (Exception e)
+        {
+            return new ResponseEntity<>("An internal server error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.example.operation_reservation.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,17 +19,15 @@ import java.time.LocalDateTime;
 public class Appointment extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "doctor_appointment")
+    @JsonIgnore
     private Doctor doctor;
 
     @ManyToOne
     @JoinColumn(name = "patient_appointment")
+    @JsonIgnore
     private Patient patient;
 
     private String problem;
-
-    @OneToOne
-    @JoinColumn(name = "slot_id", nullable = false)
-    private TimeTableSlot slot;
 
     private LocalDateTime startDate;
 

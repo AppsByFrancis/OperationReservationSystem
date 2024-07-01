@@ -23,9 +23,6 @@ public class Patient extends BaseEntity {
     @Column(nullable = false)
     private String lastName;
 
-    @OneToMany(mappedBy = "patient")
-    private List<TimeTableSlot> timeSlots;
-
     @ManyToOne()
     @JoinColumn(name = "hospital_id")
     private Hospital hospital;

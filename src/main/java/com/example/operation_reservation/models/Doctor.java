@@ -26,9 +26,6 @@ public class Doctor extends BaseEntity {
     @Column(nullable = false)
     private String qualification;
 
-    @OneToMany(mappedBy = "doctor")
-    private List<TimeTableSlot> timeSlots;
-
     @ManyToOne
     @JoinColumn(name = "hospital_id", nullable = false)
     private Hospital hospital;

@@ -6,6 +6,7 @@ import com.example.operation_reservation.repositories.AppointmentRepository;
 import com.example.operation_reservation.responseDto.AppointmentResponseDto;
 import com.example.operation_reservation.service.AppointmentService;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,7 +23,7 @@ public class AppointmentController {
     }
 
     @PostMapping
-    public AppointmentResponseDto addAppointment(AppointmentDto dto) throws Exception
+    public AppointmentResponseDto addAppointment(@RequestBody AppointmentDto dto) throws Exception
     {
         return appointmentService.createAppointment(dto);
     }
